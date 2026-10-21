@@ -82,6 +82,38 @@ The same mistake showed up everywhere: **the app believed whatever the caller to
 4. **Numbers got guardrails.** Amounts are validated, bounded, and checked for overflow. A transfer is one all-or-nothing database step with a balance check.
 5. **Dangerous surfaces were removed.** The shell call, the debug endpoint, the secrets dump, and wildcard CORS are gone. The deploy files lost their world-writable folders, seeded sessions, and baked-in secrets.
 
+## Universal patterns and principles
+
+COBOL was the example. The shapes below show up in almost any system, in any language, old or new. Each one is a question you can ask without reading code.
+
+| Principle | The question to ask | Flaws it closed here | Where else it lives |
+|---|---|---|---|
+| **Trust boundary** | Who does the system believe, and how does it check? | Callers declaring their own role and user ID | Every login, API key, and "I'm the manager" phone call |
+| **Data is not instructions** | Can typed text ever become a command? | SQL injection, shell commands, path traversal, forged log lines | Spreadsheet formulas, email spoofing, prompt injection against AI agents |
+| **One source of authority** | Is identity decided in exactly one place? | The session layer replacing per-endpoint trust | Single sign-on, one ledger, one source of truth |
+| **Ownership travels with the data** | Does the query itself say whose record this is? | Reading or moving someone else's account | Row-level permissions, shared drives, medical records |
+| **Fail closed, answer the same** | Does "forbidden" look identical to "doesn't exist"? | Account guessing, session guessing, helpful error hints | Login screens that say which half you got wrong |
+| **Numbers have edges** | What happens at the largest and smallest value? | Silent overflow, negative transfers | Y2K, rocket guidance, money rounding |
+| **Secrets live outside the code** | If this file leaks, what else leaks? | Hardcoded passwords, keys in config and compose files | Keys in public repos, passwords on sticky notes |
+| **Less surface, less risk** | Does this endpoint need to exist? | Debug, config dump, shell call | Old admin panels, forgotten test accounts |
+| **Wrap, then prove, then replace** | Can I put a checked layer around it before touching the core? | The whole approach | Strangler pattern, shadow runs, gradual migration |
+| **Unverified means unproven** | Did anyone run it and try to break it? | The honesty of this writeup | Every claim you've been told "should work" |
+
+### The agent-era additions
+
+Attackers can now be agents too, and they don't get bored. That changes a few things:
+
+- **Speed is the new threat.** Guessing thousands of IDs or passwords takes seconds, so rate limits and identical error answers matter more than they used to.
+- **Tools need leashes.** An agent should be able to read and propose by default, and write only through a gated, logged action. Wrapping a legacy core in an agent layer is only safe if that layer holds the same boundary as the code under it.
+- **Log every call, and make the log hard to edit.** When two agents are fighting, the record of what each one did is how you work out who is right.
+- **Red-team your own patch.** Ask a second agent, with fresh context, how it would break the first agent's fix. That question produced the failure list in this writeup.
+
+### The loop
+
+Every fix above feeds the next test. Patch, attack your own patch, record what's left, patch again. The goal is a short and honest list of what you haven't covered yet.
+
+---
+
 ## What isn't proven
 
 The fixes were written but **never compiled or run**, because the machine had no COBOL compiler or Docker. The ten places it can still fail, most serious first:
