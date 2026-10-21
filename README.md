@@ -112,6 +112,46 @@ Attackers can now be agents too, and they don't get bored. That changes a few th
 
 Every fix above feeds the next test. Patch, attack your own patch, record what's left, patch again. The goal is a short and honest list of what you haven't covered yet.
 
+## The 3-6-9 pattern
+
+The same principles fold into a shape I can hold in my head: **3** questions, **6** moves, **9** steps. It's a memory lens. The security claims above stand on their own whether or not the numbers mean anything deeper.
+
+### 3: the questions every system must answer
+
+| # | Question | What goes wrong when it's skipped |
+|---|---|---|
+| 1 | **Who do you believe?** (trust) | Anyone can claim to be admin |
+| 2 | **Can data become a command?** (instruction) | Typed text runs as SQL or a shell |
+| 3 | **Did anyone try to break it?** (proof) | You ship a fix that only works on paper |
+
+### 6: each question has a prevent move and a detect move
+
+3 × 2 = 6. Prevention stops the attack. Detection tells you when prevention failed.
+
+| Question | Prevent | Detect |
+|---|---|---|
+| Trust | Identity comes from the server, and ownership sits in the query | An audit log of who did what, with sanitized entries |
+| Instruction | Bind inputs, validate bounds, remove the shell and debug paths | Reject and record odd input instead of quietly fixing it |
+| Proof | Compile and replay the original attacks | A second agent red-teams the patch with fresh context |
+
+### 9: the full cycle, three phases of three
+
+3 × 3 = 9. Step 9 feeds step 1, so the cycle never finishes. It only gets shorter.
+
+| Phase | Step | Where this exercise stands |
+|---|---|---|
+| **See** | 1. List what the system trusts | Done |
+| | 2. List every input | Done |
+| | 3. List every surface, including debug and old copies | Done |
+| **Fix** | 4. Wrap the core with a thin layer, no rewrite | Done |
+| | 5. Bind inputs, take identity from the server, check ownership | Done (untested) |
+| | 6. Remove surface, secrets, and dangerous calls | Done (untested) |
+| **Prove** | 7. Compile and replay the original attacks | **Not done** |
+| | 8. Red-team the patch | Partial: the agent listed its own weak points |
+| | 9. Record what's left, which becomes step 1 | Done (the ten failure points below) |
+
+That table is the honest status of this project. Six of nine steps are done, and every one of them still needs step 7 before it counts.
+
 ---
 
 ## What isn't proven
