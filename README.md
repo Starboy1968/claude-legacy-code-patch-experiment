@@ -150,7 +150,7 @@ The same principles fold into a shape I can hold in my head: **3** questions, **
 | | 8. Red-team the patch | Partial: the agent listed its own weak points |
 | | 9. Record what's left, which becomes step 1 | Done (the ten failure points below) |
 
-That table is the honest status of this project. Six of nine steps are done, and every one of them still needs step 7 before it counts.
+That table is the honest status of this project. Seven of nine steps are done, one is partial, and one hasn't started. The two fix steps still need step 7 before they count.
 
 ---
 
